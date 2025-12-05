@@ -3,356 +3,353 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Focus Timer</title>
+  <title>Pomodoro Focus Timer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap');
 
     body {
-      margin: 0; height: 100vh; background: #F8F9FA; font-family: 'Inter', sans-serif;
-      display: flex; align-items: center; justify-content: center; color: #212529;
+      margin: 0;
+      height: 100vh;
+      background: #f8f9fa;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a1a1a;
+      overflow: hidden;
     }
 
-    .timer {
-      background: white; padding: 3rem 2.5rem; border-radius: 28px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.09); width: 90%; max-width: 520px; text-align: center;
+    .container {
+      background: white;
+      padding: 3.5rem 3rem;
+      border-radius: 32px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.12);
+      text-align: center;
+      max-width: 480px;
+      width: 90%;
     }
 
-    .mode-toggle {
-      display: inline-flex; background: #E9ECEF; border-radius: 12px; padding: 4px; margin-bottom: 2rem;
+    .title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #d35400;
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
     }
 
-    .mode-btn {
-      padding: 0.6rem 1.4rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.8;
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
     }
 
-    .mode-btn.active { background: #5C7AEA; color: white; }
-
-    .pomodoro-info {
-      font-size: 0.9rem; margin: 0.8rem auto 0; opacity: 0.7; max-width: 420px;
+    .timer-display {
+      font-size: 8.5rem;
+      font-weight: 600;
+      letter-spacing: -8px;
+      color: #e74c3c;
+      margin: 1rem 0;
+      line-height: 1;
+      transition: color 0.6s;
     }
 
-    .study { font-size: 1.5rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
-
-    .time { font-size: 7rem; font-weight: 600; margin: 0.5rem 0; letter-spacing: -5px; transition: color 0.6s; }
-    .label { font-size: 1.5rem; font-weight: 500; margin-bottom: 2rem; opacity: 0.85; transition: color 0.6s; }
-
-    .buttons button {
-      font-size: 1.1rem; padding: 0.9rem 2rem; margin: 0 0.6rem; border: none; border-radius: 14px;
-      cursor: pointer; font-weight: 600; transition: all 0.3s;
+    .session-label {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 1rem 0 2rem;
+      color: #e74c3c;
+      transition: color 0.6s;
     }
 
-    .start { background: #5C7AEA; color: white; }
-    .start:hover { background: #4263EB; }
-    .pause { background: #FFB86C; color: white; }
-    .pause.disabled, .reset.disabled { 
-      background: #ccc !important; cursor: not-allowed !important; opacity: 0.6;
-    }
-    .reset { background: #DEE2E6; color: #495057; }
-
-    .stats { margin-top: 1.5rem; font-size: 1.05rem; opacity: 0.75; }
-    .stats span { font-weight: 600; }
-
-    .custom-times {
-      margin: 1.5rem 0; display: grid; grid-template-columns: repeat(3,1fr); gap: 0.8rem;
+    .buttons {
+      margin: 2.5rem 0;
     }
 
-    .custom-times label { font-size: 0.9rem; text-align: left; }
-    .custom-times input {
-      width: 100%; padding: 0.6rem; border: 1px solid #DEE2E6; border-radius: 10px;
-      text-align: center; font-size: 1rem;
+    button {
+      padding: 1rem 2.8rem;
+      margin: 0 1rem;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
     }
 
-    .tasks { margin-top: 2.5rem; text-align: left; }
-    .tasks h3 { margin: 0 0 0.8rem; text-align: center; }
-    .task-input { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-    .task-input input { flex: 1; padding: 0.6rem; border: 1px solid #DEE2E6; border-radius: 10px; }
-    .task-input button { padding: 0 1.2rem; background: #5C7AEA; color: white; border: none; border-radius: 10px; cursor: pointer; }
+    #startBtn {
+      background: #27ae60;
+      color: white;
+    }
 
-    .task-list { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
-    .task-list li { display: flex; align-items: center; padding: 0.5rem 0; }
-    .task-list .completed { text-decoration: line-through; opacity: 0.6; }
+    #startBtn:hover { background: #219a52; }
 
-    .work .time, .work .label { color: #5C7AEA; }
-    .short .time, .short .label { color: #22D3EE; }
-    .long .time, .long .label { color: #69DB7C; }
+    #pauseBtn {
+      background: #f39c12;
+      color: white;
+    }
 
+    #pauseBtn.disabled {
+      background: #95a5a6 !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    #resetBtn {
+      background: #ecf0f1;
+      color: #2c3e50;
+    }
+
+    #resetBtn.disabled {
+      background: #bdc3c7 !important;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .stats {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      opacity: 0.85;
+    }
+
+    .stats span { font-weight: 700; color: #e74c3c; }
+
+    /* Break state colors */
+    .break .timer-display,
+    .break .session-label { color: #27ae60; }
+
+    .long-break .timer-display,
+    .long-break .session-label { color: #3498db; }
+
+    /* Modal */
     .modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center; z-index: 1000;
-      opacity: 0; visibility: hidden; transition: 0.3s;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.4s;
+      z-index: 1000;
     }
-    .modal.active { opacity: 1; visibility: visible; }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
     .modal-content {
-      background: white; padding: 2rem; border-radius: 16px; text-align: center;
-      max-width: 380px; width: 90%; box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      background: white;
+      padding: 2.5rem;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     }
-    .modal h2 { margin: 0 0 1rem; font-size: 1.5rem; }
-    .modal p { margin: 0 0 1.5rem; opacity: 0.8; }
-    .modal button {
-      padding: 0.8rem 1.6rem; margin: 0 0.5rem; border: none; border-radius: 10px;
-      font-weight: 600; cursor: pointer;
-    }
-    .btn-primary { background: #5C7AEA; color: white; }
-    .btn-secondary { background: #DEE2E6; color: #495057; }
+
+    .modal h2 {
+      { font-size: 1.8rem; margin: 0 0 1rem; color: #27ae60; }
+    .modal p        { font-size: 1.1rem; margin: 0 0 2rem; opacity: 0.9; }
+    .modal button    { padding: 0.9rem 2rem; margin: 0 0.7rem; border-radius: 14px; font-weight: 600; }
+    .btn-primary     { background: #27ae60; color: white; }
+    .btn-secondary   { background: #ecf0f1; color: #2c3e50; }
   </style>
 </head>
-<body>
+<body class="work">
 
-<div class="timer work" id="app">
-  <div class="mode-toggle">
-    <button class="mode-btn active" id="pomodoroMode">Pomodoro</button>
-    <button class="mode-btn" id="customMode">Custom</button>
-  </div>
+  <div class="container">
+    <h1 class="title">Pomodoro Focus Timer</h1>
+    <p class="subtitle">
+      25 minutes focused work → 5 minutes break<br>
+      After 4 sessions → long break (15–30 min)<br><br>
+      <strong>Pausing more than twice during work = timer resets</strong>
+    </p>
 
-  <div id="pomodoroInfo" class="pomodoro-info">
-    The Pomodoro Technique: work 25 min → 5 min break. Every 4th → long break.
-    Pausing more than twice during work resets the timer.
-  </div>
+    <div class="session-label" id="sessionLabel">Work Session</div>
+    <div class="timer-display" id="timer">25:00</div>
 
-  <div id="customTimes" class="custom-times" style="display:none;">
-    <div><label>Work (min)</label><input type="number" id="workInput" value="25" min="1"></div>
-    <div><label>Short Break</label><input type="number" id="shortInput" value="5" min="1"></div>
-    <div><label>Long Break</label><input type="number" id="longInput" value="15" min="1"></div>
-  </div>
-
-  <div class="study">Time to Study!</div>
-  <div class="label" id="label">Work</div>
-  <div class="time" id="time">25:00</div>
-
-  <div class="buttons">
-    <button class="start" id="start">Start</button>
-    <button class="pause" id="pause" style="display:none">Pause</button>
-    <button class="reset" id="reset">Reset</button>
-  </div>
-
-  <div class="stats">
-    Sessions: <span id="sessions">0</span> | 
-    Pauses: <span id="pauses">0</span> | 
-    Resets by pause: <span id="resets">0</span>
-  </div>
-
-  <div class="tasks">
-    <h3>Tasks</h3>
-    <div class="task-input">
-      <input type="text" id="taskInput" placeholder="What are you working on?">
-      <button id="addTask">Add</button>
+    <div class="buttons">
+      <button id="startBtn">Start</button>
+      <button id="pauseBtn" style="display:none">Pause</button>
+      <button id="resetBtn">Reset</button>
     </div>
-    <ul class="task-list" id="taskList"></ul>
-    <div style="text-align:center;margin-top:1rem;opacity:0.8;">
-      Completed: <span id="completedTasks">0</span> / <span id="totalTasks">0</span>
+
+    <div class="stats">
+      Pomodoros Completed: <span id="sessions">0</span> | 
+      Pauses Used: <span id="pauses">0</span> | 
+      Resets by Misuse: <span id="resets">0</span>
     </div>
   </div>
-</div>
 
-<!-- Modals -->
-<div class="modal" id="pauseModal">
-  <div class="modal-content">
-    <h2>Too Many Pauses!</h2>
-    <p>You paused more than twice during work.<br>The timer has been reset.</p>
-    <button class="btn-secondary" onclick="closeModal('pauseModal')">OK</button>
+  <!-- Modals -->
+  <div class="modal" id="pauseModal">
+    <div class="modal-content">
+      <h2>Misuse Detected!</h2>
+      <p>You paused more than twice during a work session.<br>The timer has been reset as penalty.</p>
+      <button class="btn-secondary" onclick="closeModal('pauseModal')">OK</button>
+    </div>
   </div>
-</div>
 
-<div class="modal" id="sessionModal">
-  <div class="modal-content">
-    <h2 id="modalTitle">Great job!</h2>
-    <p id="modalText">Time for a well-deserved break</p>
-    <button class="btn-primary" id="startNext">Start Break</button>
-    <button class="btn-secondary" onclick="closeModal('sessionModal')">Close</button>
+  <div class="modal" id="sessionModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Great Job!</h2>
+      <p id="modalText">Time for a well-deserved break</p>
+      <button class="btn-primary" id="startNext">Start Break</button>
+      <button class="btn-secondary" onclick="closeModal('sessionModal')">Close</button>
+    </div>
   </div>
-</div>
 
-<script>
-  const pomodoroBtn = document.getElementById('pomodoroMode');
-  const customBtn = document.getElementById('customMode');
-  const customTimesDiv = document.getElementById('customTimes');
-  const pomodoroInfo = document.getElementById('pomodoroInfo');
-  const workInput = document.getElementById('workInput');
-  const shortInput = document.getElementById('shortInput');
-  const longInput = document.getElementById('longInput');
-  const timeDisplay = document.getElementById('time');
-  const labelDisplay = document.getElementById('label');
-  const startBtn = document.getElementById('start');
-  const pauseBtn = document.getElementById('pause');
-  const resetBtn = document.getElementById('reset');
-  const sessionsSpan = document.getElementById('sessions');
-  const pausesSpan = document.getElementById('pauses');
-  const resetsSpan = document.getElementById('resets');
-  const timerDiv = document.getElementById('app');
+  <!-- Audio Alerts -->
+  <audio id="workDone" src="https://freesound.org/data/previews/531/531902_5121236-lq.mp3"></audio>
+  <audio id="shortBreakDone" src="https://freesound.org/data/previews/269/269026_5094881-lq.mp3"></audio>
+  <audio id="longBreakDone" src="https://freesound.org/data/previews/66/66987_931655-lq.mp3"></audio>
 
-  const taskInput = document.getElementById('taskInput');
-  const addTaskBtn = document.getElementById('addTask');
-  const taskList = document.getElementById('taskList');
-  const completedSpan = document.getElementById('completedTasks');
-  const totalSpan = document.getElementById('totalTasks');
+  <script>
+    const timerEl = document.getElementById('timer');
+    const labelEl = document.getElementById('sessionLabel');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const sessionsEl = document.getElementById('sessions');
+    const pausesEl = document.getElementById('pauses');
+    const resetsEl = document.getElementById('resets');
 
-  let timeLeft = 25 * 60;
-  let isRunning = false;
-  let timerId = null;
-  let sessions = 0;
-  let pauseCount = 0;
-  let resetByPauseCount = 0;
-  let currentMode = 'work';
+    let timeLeft = 25 * 60;
+    let isRunning = false;
+    let timerId = null;
+    let sessions = 0;
+    let pauseCount = 0;
+    let resetByMisuse = 0;
+    let currentMode = 'work'; // work, short, long
 
-  const modes = {
-    work:  { time: 25*60, label: 'Work',       class: 'work'  },
-    short: { time: 5*60,  label: 'Short Break',class: 'short' },
-    long:  { time: 15*60, label: 'Long Break', class: 'long'  }
-  };
+    const WORK_TIME = 25 * 60;
+    const SHORT_BREAK = 5 * 60;
+    const LONG_BREAK = 15 * 60;
 
-  const workDone = new Audio('https://freesound.org/data/previews/531/531902_5121236-lq.mp3');
-  const breakDone = new Audio('https://freesound.org/data/previews/269/269026_5094881-lq.mp3');
-  const longBreakDone = new Audio('https://freesound.org/data/previews/66/66987_931655-lq.mp3');
+    const workSound = document.getElementById('workDone');
+    const shortSound = document.getElementById('shortBreakDone');
+    const longSound = document.getElementById('longBreakDone');
 
-  function openModal(id) { document.getElementById(id).classList.add('active'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-  function updateDisplay() {
-    const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-    const s = String(timeLeft % 60).padStart(2, '0');
-    timeDisplay.textContent = `${m}:${s}`;
-  }
-
-  function updateButtons() {
-    if (currentMode === 'work') {
-      pauseBtn.style.display = isRunning ? 'inline-block' : 'none';
-      pauseBtn.classList.remove('disabled');
-      resetBtn.classList.remove('disabled');
-    } else {
-      pauseBtn.style.display = 'none';
-      pauseBtn.classList.add('disabled');
-      resetBtn.classList.add('disabled'); // ← NEW: Reset disabled on breaks
-    }
-  }
-
-  function switchMode() {
-    if (currentMode === 'work') {
-      sessions++; sessionsSpan.textContent = sessions;
-      currentMode = sessions % 4 === 0 ? 'long' : 'short';
-      workDone.play();
-      document.getElementById('modalTitle').textContent = "Great job!";
-      document.getElementById('modalText').textContent = "Time for a well-deserved break";
-      document.getElementById('startNext').textContent = "Start Break";
-    } else {
-      currentMode = 'work';
-      (currentMode === 'short' ? breakDone : longBreakDone).play();
-      document.getElementById('modalTitle').textContent = "Break Over!";
-      document.getElementById('modalText').textContent = "Back to work — let's crush it!";
-      document.getElementById('startNext').textContent = "Start Work";
+    function updateDisplay() {
+      const m = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      const s = String(timeLeft % 60).padStart(2, '0');
+      timerEl.textContent = `${m}:${s}`;
     }
 
-    timeLeft = modes[currentMode].time;
-    labelDisplay.textContent = modes[currentMode].label;
-    timerDiv.className = 'timer ' + modes[currentMode].class;
-    updateDisplay();
-    pauseCount = 0; pausesSpan.textContent = 0;
-    updateButtons();
-    openModal('sessionModal');
-  }
+    function updateButtons() {
+      if (currentMode === 'work') {
+        pauseBtn.style.display = isRunning ? 'inline-block' : 'none';
+        pauseBtn.classList.remove('disabled');
+        resetBtn.classList.remove('disabled');
+      } else {
+        pauseBtn.style.display = 'none';
+        resetBtn.classList.add('disabled');
+      }
+    }
 
-  function tick() {
-    if (timeLeft > 0) {
-      timeLeft--;
+    function switchMode() {
+      if (currentMode === 'work') {
+        sessions++;
+        sessionsEl.textContent = sessions;
+        currentMode = sessions % 4 === 0 ? 'long' : 'short';
+        workSound.play();
+        document.getElementById('modalTitle').textContent = "Great Job!";
+        document.getElementById('modalText').textContent = currentMode === 'long' 
+          ? "Time for a long break!" : "Time for a short break";
+        document.getElementById('startNext').textContent = "Start Break";
+      } else {
+        currentMode = 'work';
+        if (currentMode === 'short') shortSound.play();
+        else longSound.play();
+        document.getElementById('modalTitle').textContent = "Break Over!";
+        document.getElementById('modalText').textContent = "Back to work — let's go!";
+        document.getElementById('startNext').textContent = "Start Work";
+      }
+
+      timeLeft = currentMode === 'work' ? WORK_TIME : (currentMode === 'short' ? SHORT_BREAK : LONG_BREAK);
+      labelEl.textContent = currentMode === 'work' ? 'Work Session' : 
+                           (currentMode === 'short' ? 'Short Break' : 'Long Break');
+      document.body.className = currentMode;
+
       updateDisplay();
-    } else {
+      pauseCount = 0;
+      pausesEl.textContent = 0;
+      updateButtons();
+      openModal('sessionModal');
+    }
+
+    function tick() {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateDisplay();
+      } else {
+        clearInterval(timerId);
+        isRunning = false;
+        startBtn.style.display = 'inline-block';
+        updateButtons();
+        switchMode();
+      }
+    }
+
+    startBtn.onclick = () => {
+      if (isRunning) return;
+      timerId = setInterval(tick, 1000);
+      isRunning = true;
+      startBtn.style.display = 'none';
+      updateButtons();
+    };
+
+    pauseBtn.onclick = () => {
+      if (currentMode !== 'work') return;
       clearInterval(timerId);
       isRunning = false;
       startBtn.style.display = 'inline-block';
-      updateButtons();
-      switchMode();
-    }
-  }
+      pauseBtn.style.display = 'none';
+      pauseCount++;
+      pausesEl.textContent = pauseCount;
 
-  startBtn.onclick = () => {
-    if (isRunning) return;
-    timerId = setInterval(tick, 1000);
-    isRunning = true;
-    startBtn.style.display = 'none';
-    updateButtons();
-  };
+      if (pauseCount > 2) {
+        openModal('pauseModal');
+        timeLeft = WORK_TIME;
+        updateDisplay();
+        resetByMisuse++;
+        resetsEl.textContent = resetByMisuse;
+        pauseCount = 0;
+        pausesEl.textContent = 0;
+      }
+    };
 
-  pauseBtn.onclick = () => {
-    if (currentMode !== 'work') return;
-    clearInterval(timerId);
-    isRunning = false;
-    startBtn.style.display = 'inline-block';
-    pauseBtn.style.display = 'none';
-    pauseCount++; pausesSpan.textContent = pauseCount;
-
-    if (pauseCount > 2) {
-      openModal('pauseModal');
-      timeLeft = modes.work.time;
+    resetBtn.onclick = () => {
+      if (currentMode !== 'work') return;
+      clearInterval(timerId);
+      isRunning = false;
+      currentMode = 'work';
+      timeLeft = WORK_TIME;
+      labelEl.textContent = 'Work Session';
+      document.body.className = 'work';
       updateDisplay();
-      resetByPauseCount++; resetsSpan.textContent = resetByPauseCount;
-      pauseCount = 0; pausesSpan.textContent = 0;
-    }
-  };
+      startBtn.style.display = 'inline-block';
+      pauseBtn.style.display = 'none';
+      pauseCount = 0;
+      pausesEl.textContent = 0;
+      updateButtons();
+    };
 
-  resetBtn.onclick = () => {
-    if (currentMode !== 'work') return; // ← Prevents reset during breaks
-    clearInterval(timerId);
-    isRunning = false;
-    currentMode = 'work';
-    timeLeft = modes.work.time;
-    labelDisplay.textContent = 'Work';
-    timerDiv.className = 'timer work';
+    document.getElementById('startNext').onclick = () => {
+      closeModal('sessionModal');
+      startBtn.click();
+    };
+
+    // Init
     updateDisplay();
-    startBtn.style.display = 'inline-block';
-    pauseBtn.style.display = 'none';
-    pauseCount = 0; pausesSpan.textContent = 0;
     updateButtons();
-  };
-
-  document.getElementById('startNext').onclick = () => {
-    closeModal('sessionModal');
-    startBtn.click();
-  };
-
-  // Mode switching (unchanged)
-  pomodoroBtn.onclick = () => {
-    pomodoroBtn.classList.add('active'); customBtn.classList.remove('active');
-    customTimesDiv.style.display = 'none'; pomodoroInfo.style.display = 'block';
-    modes.work.time = 25*60; modes.short.time = 5*60; modes.long.time = 15*60;
-    workInput.value = 25; shortInput.value = 5; longInput.value = 15;
-    if (currentMode === 'work') { timeLeft = 25*60; updateDisplay(); }
-  };
-
-  customBtn.onclick = () => {
-    customBtn.classList.add('active'); pomodoroBtn.classList.remove('active');
-    customTimesDiv.style.display = 'grid'; pomodoroInfo.style.display = 'none';
-  };
-
-  [workInput, shortInput, longInput].forEach(input => {
-    input.addEventListener('change', () => {
-      modes.work.time  = (parseInt(workInput.value) || 25) * 60;
-      modes.short.time = (parseInt(shortInput.value) || 5) * 60;
-      modes.long.time  = (parseInt(longInput.value) || 15) * 60;
-      if (currentMode === 'work') { timeLeft = modes.work.time; updateDisplay(); }
-    });
-  });
-
-  // Tasks
-  function updateTaskCount() {
-    totalSpan.textContent = taskList.children.length;
-    completedSpan.textContent = taskList.querySelectorAll('input[type=checkbox]:checked').length;
-  }
-  addTaskBtn.onclick = () => {
-    const text = taskInput.value.trim();
-    if (!text) return;
-    const li = document.createElement('li');
-    const cb = document.createElement('input'); cb.type = 'checkbox';
-    const span = document.createElement('span'); span.textContent = text;
-    cb.onchange = () => { span.classList.toggle('completed', cb.checked); updateTaskCount(); };
-    li.append(cb, span); taskList.appendChild(li);
-    taskInput.value = ''; updateTaskCount();
-  };
-  taskInput.addEventListener('keypress', e => e.key === 'Enter' && addTaskBtn.click());
-
-  // Init
-  labelDisplay.textContent = 'Work';
-  updateDisplay();
-  updateButtons();
-  updateTaskCount();
-</script>
+  </script>
 </body>
 </html>
